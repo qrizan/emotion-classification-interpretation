@@ -16,9 +16,6 @@ Proyek ini menambahkan layer interpretasi yang bekerja setelah klasifikasi emosi
 
 - Klasifikasi emosi 6 kelas dari teks Bahasa Indonesia (anger, disgust, fear, joy, sadness, surprise)
 - Interpretasi semantik yang memilih penjelasan terbaik dari kandidat berdasarkan similarity score
-- Confidence score untuk setiap prediksi dengan visual progress bar
-- Web interface yang clean dan compact dengan HTMX untuk interaksi tanpa reload halaman
-- Input form yang otomatis collapse setelah analisis untuk menghemat ruang layar
 - RESTful API untuk integrasi dengan sistem lain
 - Detail ranking yang menampilkan semua kandidat penjelasan dengan score
 
@@ -41,7 +38,7 @@ Model tidak di-commit ke Git karena ukurannya yang besar.
 3. Model tersimpan di Docker image layer, sehingga saat container start tidak perlu download lagi
 4. Embedding model (`intfloat/multilingual-e5-small`) dipanggil via HuggingFace Inference API dan tidak di-download ke lokal
 
-**Penting:**
+**Catatan:**
 - Build pertama kali membutuhkan waktu ~5-20 menit ( tergantung koneksi internet ) karena proses download model
 - Build berikutnya lebih cepat karena Docker menggunakan layer cache
 - Startup container cepat (~5 detik) karena model sudah tersedia di image
@@ -146,21 +143,19 @@ emotion-classification-interpretation/
 - [Docker](https://www.docker.com/) - Containerization platform
 
 **Models:**
-- `qrizan/emotion-classifier-indonesia` - DistilBERT yang sudah di-fine-tune untuk emotion classification
-- `intfloat/multilingual-e5-small` - Embedding model untuk semantic similarity (diakses via API)
+- [qrizan/emotion-classifier-indonesia](https://huggingface.co/qrizan/emotion-classifier-indonesia) - DistilBERT yang sudah di-fine-tune untuk emotion classification
+- [intfloat/multilingual-e5-small](https://huggingface.co/intfloat/multilingual-e5-small) - Embedding model untuk semantic similarity (diakses via API)
+- [Indonesian DistilBERT Base Model (uncased)](https://huggingface.co/cahya/distilbert-base-indonesian) - Base model yang digunakan untuk fine-tuning
 
 ## Resources
 
-### Documentation
+#### Documentation
 - [MODELING.md](MODELING.md) - Dokumentasi proses modeling (dataset preparation, training, interpretation pipeline)
 
-### Dataset
+#### Dataset
 - [EmoTweetID Dataset](https://data.mendeley.com/datasets/jzgnjsff9f/5) - Dataset yang digunakan untuk training model
 
-### Base Model
-- [Indonesian DistilBERT Base Model (uncased)](https://huggingface.co/cahya/distilbert-base-indonesian) - Base model yang digunakan untuk fine-tuning
-
-### Training Notebooks (Google Colab)
+#### Training Notebooks (Google Colab)
 - [00_setup_environment.ipynb](https://colab.research.google.com/drive/1JYr4cG54Hpbc4fU_-VmCEifnIuG_xThD) - Setup environment dan dependencies
 - [01_dataset_preparation.ipynb](https://colab.research.google.com/drive/1utV-2a2ya5E4gPnZVhags7De-bxCgY45) - Persiapan dan preprocessing dataset
 - [02_train_emotion_classifier.ipynb](https://colab.research.google.com/drive/14qHwE-mtN9-BKQT-bcr3gEUhsyuXxvZH) - Training model emotion classifier
@@ -182,8 +177,7 @@ Lihat `.env.example` untuk detail lengkap.
 ## Notes
 
 - Proyek ini dibuat untuk **catatan pembelajaran NLP**, bukan untuk production use
-- Model dilatih dengan dataset EmoTweetID yang terbatas
+- Model dilatih dengan dataset yang terbatas
 - Kode dibuat sederhana agar mudah dipahami dan dimodifikasi
 - Model di-download saat Docker build time, bukan saat startup, untuk memastikan startup yang cepat
 - Embedding model diakses via API karena lebih praktis daripada download model besar lagi ke lokal
-- UI dirancang untuk fit viewport dengan layout compact dan collapsible input form
