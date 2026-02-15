@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    
+    <title>Emotion Classification & Interpretation</title>
+    <meta name="description" content="Klasifikasi emosi dan interpretasi semantik dari teks Bahasa Indonesia menggunakan AI.">
+    
+    <script src="https://unpkg.com/htmx.org@1.9.10"></script>
+    <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Emotion Classification & Interpretation</h1>
+            <p class="subtitle">Klasifikasi emosi dan interpretasi dari teks Bahasa Indonesia</p>
+        </header>
+
+        <main>
+            <!-- input form (Collapsible) -->
+            <form hx-post="/predict" 
+                  hx-target="#result" 
+                  hx-swap="innerHTML"
+                  class="input-form"
+                  id="analyze-form">
+                
+                <!-- collapsed preview (hidden by default) -->
+                <div class="collapsed-preview" onclick="expandForm()">
+                    <span class="preview-text" id="preview-text">Klik untuk menganalisis teks baru...</span>
+                    <button type="button" class="edit-btn">Edit</button>
+                </div>
+
+                <!-- full form -->
+                <div class="form-group">
+                    <label for="text">
+                        Masukkan teks: <span class="required-indicator">*</span>
+                    </label>
+                    <textarea 
+                        id="text" 
+                        name="text" 
+                        placeholder="Contoh: Saya sangat senang hari ini!"
+                        required
+                        minlength="3"
+                        maxlength="500"></textarea>
+                    <small class="form-help">Minimal 3 karakter, maksimal 500 karakter</small>
+                </div>
+                <button type="submit" class="btn-submit" id="submit-btn">
+                    Analisis Emosi
+                </button>
+            </form>
+
+            <!-- result area -->
+            <div id="result" class="result-container">
+                <div class="result-loading">
+                    <div class="loading-spinner"></div>
+                    <p class="loading-text">Menganalisis...</p>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script>
+        const form = document.getElementById('analyze-form');
+        const textarea = document.getElementById('text');
+        const previewText = document.getElementById('preview-text');
+        const resultContainer = document.getElementById('result');
+
+        // collapse form after successful request
+        document.body.addEventListener('htmx:afterRequest', function(e) {
+            if (e.detail.elt.id === 'analyze-form' && e.detail.successful) {
+                const text = textarea.value.trim();
+                if (text) {
+                    previewText.textContent = text;
+                    form.classList.add('collapsed');
+                }
+            }
+        });
+
+        // show loading
+        document.body.addEventListener('htmx:beforeRequest', function(e) {
+            if (e.detail.elt.id === 'analyze-form') {
+                document.querySelector('.result-loading').style.display = 'block';
+            }
+        });
+
+        document.body.addEventListener('htmx:afterRequest', function(e) {
+            if (e.detail.elt.id === 'analyze-form') {
+                document.querySelector('.result-loading').style.display = 'none';
+            }
+        });
+
+        // expand form
+        function expandForm() {
+            form.classList.remove('collapsed');
+            textarea.focus();
+        }
+
+        // keyboard shortcut: Ctrl+Enter to submit
+        textarea.addEventListener('keydown', function(e) {
+            if (e.ctrlKey && e.key === 'Enter') {
+                form.requestSubmit();
+            }
+        });
+    </script>
+</body>
+</html>

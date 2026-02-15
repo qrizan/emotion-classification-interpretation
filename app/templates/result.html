@@ -1,0 +1,62 @@
+{% if label %}
+<article class="result-card">
+    <header class="result-header">
+        <div class="emotion-display">
+            <span class="emotion-emoji">
+                {%- if label == 'joy' -%}😊
+                {%- elif label == 'sadness' -%}😢
+                {%- elif label == 'anger' -%}😠
+                {%- elif label == 'fear' -%}😨
+                {%- elif label == 'disgust' -%}🤢
+                {%- elif label == 'surprise' -%}😲
+                {%- else -%}🤔
+                {%- endif -%}
+            </span>
+            <div class="emotion-info">
+                <small>Emosi Terdeteksi</small>
+                <span class="emotion-badge emotion-{{ label }}">{{ label }}</span>
+            </div>
+        </div>
+        
+        <div class="confidence-section">
+            <small>Confidence</small>
+            <div class="confidence-bar">
+                <div class="confidence-fill" style="width: {{ confidence * 100 }}%"></div>
+            </div>
+            <span class="confidence-value">{{ "%.1f"|format(confidence * 100) }}%</span>
+        </div>
+    </header>
+
+    <div class="result-body">
+        {% if interpretation and similarity_score %}
+        <section class="interpretation-section">
+            <div class="section-label">
+                <span>Interpretasi</span>
+                <span class="score-badge">Score: {{ "%.2f"|format(similarity_score) }}</span>
+            </div>
+            <p class="interpretation-text">{{ interpretation }}</p>
+        </section>
+        {% else %}
+        <section class="interpretation-section">
+            <p class="no-interpretation">{{ interpretation }}</p>
+        </section>
+        {% endif %}
+    </div>
+
+    {% if ranking %}
+    <div class="ranking-section">
+        <details class="ranking-details">
+            <summary>
+                <span>Detail Ranking</span>
+                <span class="expand-icon">▼</span>
+            </summary>
+            <pre class="json-display">{{ ranking | tojson(indent=2) }}</pre>
+        </details>
+    </div>
+    {% endif %}
+</article>
+{% else %}
+<div class="error-message">
+    <p>Terjadi kesalahan. Silakan coba lagi.</p>
+</div>
+{% endif %}

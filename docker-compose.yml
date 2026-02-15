@@ -1,0 +1,34 @@
+services:
+  web:
+    build:
+      context: .
+      args:
+        # default values sesuai dengan app/core/config.py
+        MODEL_ID: ${MODEL_ID:-qrizan/emotion-classifier-indonesia}
+        HF_TOKEN: ${HF_TOKEN:-}
+        MAX_RETRIES: ${MAX_RETRIES:-3}
+        RETRY_DELAY: ${RETRY_DELAY:-10}
+    container_name: emotion-classifier-api
+    ports:
+      - "8000:8000"
+    environment:
+      # semua konfigurasi bisa di-override via .env file
+      # default values sesuai dengan app/core/config.py
+      - MODEL_PATH=${MODEL_PATH:-qrizan/emotion-classifier-indonesia}
+      - CONFIDENCE_THRESHOLD=${CONFIDENCE_THRESHOLD:-0.60}
+      - EMBEDDING_MODEL_NAME=${EMBEDDING_MODEL_NAME:-intfloat/multilingual-e5-small}
+      - MAX_LENGTH=${MAX_LENGTH:-128}
+      - HF_TOKEN=${HF_TOKEN:-}
+      - HUGGINGFACE_API_KEY=${HUGGINGFACE_API_KEY:-}
+      - HF_HOME=/app/.cache/huggingface
+      - RATE_LIMIT_ENABLED=${RATE_LIMIT_ENABLED:-true}
+      - RATE_LIMIT_PER_MINUTE=${RATE_LIMIT_PER_MINUTE:-30}
+      - RATE_LIMIT_PER_HOUR=${RATE_LIMIT_PER_HOUR:-200}
+    # hapus volume - model sudah di image layer
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "python", "-c", "import requests; requests.get('http://localhost:8000/health')"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 5s  # model sudah ada, start cepat

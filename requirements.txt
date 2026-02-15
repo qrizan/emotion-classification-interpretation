@@ -1,0 +1,13 @@
+--index-url https://download.pytorch.org/whl/cpu
+torch
+
+--extra-index-url https://pypi.org/simple
+fastapi
+uvicorn
+transformers
+pydantic
+httpx
+huggingface_hub
+jinja2
+python-multipart
+slowapi
